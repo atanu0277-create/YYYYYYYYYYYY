@@ -1,11 +1,31 @@
-<div align="center">
+# Ludo Online
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+A fully-featured, production-ready real-time multiplayer Ludo game.
 
-  <h1>Built with AI Studio</h2>
+## Features
+- Real-time multiplayer synchronization using WebSocket (Socket.io).
+- Room-based lobbies with full game logic on the backend.
+- Pure Vanilla JS HTML5 canvas rendering (no frameworks), maintaining 60fps animations.
+- Fully responsive styling logic conforming scaling.
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+## Setup & Running
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+**Prerequisites:** Node.js (v18 or higher recommended).
 
-</div>
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+   ```bash
+   npm start
+   ```
+
+3. Open the preview URL or navigate to `http://localhost:3000` to play.
+
+## Architecture
+
+- **Backend**: Express + Socket.IO handling completely secure state transitions and randomized dice rolling (using node's built-in cryptographically secure PRNG).
+- **Frontend**: Responsive UI paired with `requestAnimationFrame` canvas rendering.
+- **Data Validation**: Game state validation avoids ghost/out-of-turn inputs.

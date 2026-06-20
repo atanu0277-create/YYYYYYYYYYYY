@@ -1,0 +1,6 @@
+{
+  "name": "Ludo Online",
+  "description": "An elegant, real-time multiplayer Ludo board game featuring a gorgeous 3-column UI, smooth glassmorphism layout, spectator integration, live roll histories, chat panels, and custom overlapping token offsets on HTML5 Canvas.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

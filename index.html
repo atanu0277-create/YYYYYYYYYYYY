@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ludo Online</title>
+    <link rel="stylesheet" href="/style.css">
+    <meta name="theme-color" content="#0f0c29">
+</head>
+<body>
+    <div id="loader" class="screen">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- MAIN MENU -->
+    <div id="menu-screen" class="screen hidden">
+        <div class="glass-card">
+            <h1 class="title">Ludo Online</h1>
+            <div class="tabs">
+                <button class="tab-btn active" id="tab-create">Create Room</button>
+                <button class="tab-btn" id="tab-join">Join Room</button>
+            </div>
+
+            <!-- Create Room Form -->
+            <div id="create-form" class="form-section">
+                <input type="text" id="host-name" placeholder="Your Name" maxlength="12">
+                <div class="color-picker" id="host-color-picker">
+                    <div class="color-circle red selected" data-color="Red"></div>
+                    <div class="color-circle blue" data-color="Blue"></div>
+                    <div class="color-circle green" data-color="Green"></div>
+                    <div class="color-circle yellow" data-color="Yellow"></div>
+                </div>
+                <select id="player-count">
+                    <option value="2">2 Players</option>
+                    <option value="3">3 Players</option>
+                    <option value="4" selected>4 Players</option>
+                </select>
+                <button class="btn primary" id="btn-create-room">Create Game</button>
+            </div>
+
+            <!-- Join Room Form -->
+            <div id="join-form" class="form-section hidden">
+                <input type="text" id="join-name" placeholder="Your Name" maxlength="12">
+                <input type="text" id="join-code" placeholder="Room Code (e.g. AbC12x)">
+                <button class="btn primary" id="btn-join-room">Join Game</button>
+            </div>
+            
+            <div id="error-msg" class="error"></div>
+        </div>
+    </div>
+
+    <!-- WAITING LOBBY -->
+    <div id="lobby-screen" class="screen hidden">
+        <div class="glass-card full">
+            <div class="lobby-header">
+                <h2>Room: <span id="lobby-code">---</span></h2>
+                <button class="btn small" id="btn-copy-code">📋 Copy</button>
+            </div>
+            <div class="players-grid" id="players-list">
+                <!-- Dynamically populated -->
+            </div>
+            
+            <div class="color-picker hidden" id="lobby-color-picker">
+                <!-- For joining players to pick color -->
+                <h3>Pick your color:</h3>
+                <div id="join-color-options">
+                   <!-- circles injected here -->
+                </div>
+            </div>
+
+            <div class="lobby-controls">
+                <label class="ready-toggle">
+                    <input type="checkbox" id="check-ready"> <span class="checkmark"></span> I'm Ready
+                </label>
+            </div>
+            <button class="btn primary hidden" id="btn-start-game">Start Game</button>
+            <button class="btn small" id="btn-leave-lobby">Leave Room</button>
+            
+            <div class="chat-panel">
+                <div class="chat-messages" id="lobby-chat-messages"></div>
+                <div class="chat-input-row">
+                    <input type="text" id="lobby-chat-input" placeholder="Say hello...">
+                    <button class="btn small" id="btn-lobby-send">Send</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="game-screen" class="screen hidden">
+        <div class="top-bar glass">
+            <div>
+                <div class="logo-title">LUDO PRESTIGE <span class="tag">PRO</span></div>
+                <div class="logo-subtitle">Global Championship Season 4</div>
+            </div>
+            <div class="room-stats">
+                <div>
+                    <div class="stat-label">ROOM CODE</div>
+                    <div class="stat-val highlight" id="game-room-code">-------</div>
+                </div>
+                <div>
+                    <div class="stat-label">SPECTATORS</div>
+                    <div class="stat-val" id="spectator-indicator">0</div>
+                </div>
+            </div>
+            <div class="top-bar-controls">
+                <button class="btn small" style="background:#e74c3c" onclick="location.reload()">Leave Room</button>
+            </div>
+        </div>
+
+        <div class="main-layout">
+            <!-- Sidebar Left: Players and details -->
+            <div class="sidebar">
+                <div class="glass flex-column p-15 flex-1">
+                    <div class="section-header">PLAYERS</div>
+                    <div class="players-column" id="game-players-column">
+                        <!-- Dynamic Player Cards will be injected here -->
+                    </div>
+                </div>
+
+                <div class="glass dice-area">
+                    <div class="turn-title" id="turn-banner">YOUR TURN</div>
+                    <div class="dice-container" id="dice-container">
+                        <div class="dice" id="main-dice">⚀</div>
+                    </div>
+                    <div class="timer-container">
+                        <svg class="timer-svg" viewBox="0 0 36 36">
+                            <path class="timer-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path class="timer-progress" id="timer-path" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="timer-text" id="timer-text">30</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center column: Board container -->
+            <div class="board-container">
+                <div class="board-wrapper">
+                    <canvas id="game-board" width="600" height="600"></canvas>
+                </div>
+            </div>
+
+            <!-- Sidebar Right: Roll history + Chat -->
+            <div class="sidebar">
+                <div class="glass p-15 flex-column" style="height: 180px;">
+                    <div class="section-header">ROLL HISTORY</div>
+                    <div class="history-grid" id="history-grid">
+                        <!-- Dice history circles -->
+                        <div class="history-empty">No rolls yet</div>
+                    </div>
+                </div>
+
+                <div class="glass chat-box">
+                    <div class="section-header">LIVE CHAT</div>
+                    <div class="chat-messages" id="game-chat-messages"></div>
+                    <div class="chat-input-row">
+                        <input type="text" id="game-chat-input" placeholder="Type here...">
+                        <button id="btn-game-send" class="btn small primary" style="padding: 10px 15px; border-radius: 8px;">➔</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- GAME OVER SCREEN -->
+    <div id="game-over-screen" class="screen hidden">
+        <div class="glass-card">
+            <h1>Match Complete!</h1>
+            <div id="winner-list" class="players-grid"></div>
+            <button class="btn primary" onclick="location.reload()">Back to Menu</button>
+        </div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script type="module" src="/client.js"></script>
+</body>
+</html>
+
